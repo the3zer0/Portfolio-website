@@ -1,0 +1,254 @@
+/* ========================
+   TITLE CARD STYLES
+   Cinematic Hero Redesign
+   ======================== */
+
+.title-card {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #0A0A0F 0%, #12121A 50%, #0A0A0F 100%);
+}
+
+.particle-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.title-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+}
+
+.title-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  min-height: 70vh;
+}
+
+.title-left {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.title-initials {
+  font-size: clamp(5rem, 12vw, 10rem);
+  font-family: var(--font-family-serif);
+  font-weight: 900;
+  color: var(--color-accent-gold);
+  line-height: 1;
+  margin-bottom: var(--spacing-lg);
+  letter-spacing: -0.05em;
+  text-shadow: 0 0 60px rgba(157, 78, 221, 0.3);
+}
+
+/* Character Animation */
+.title-initials .char {
+  display: inline-block;
+  animation: charReveal 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.diagonal-line {
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-accent-gold) 0%, rgba(157, 78, 221, 0.2) 100%);
+  transform: rotate(-45deg);
+  animation: slideIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s forwards;
+  opacity: 0;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: rotate(-45deg) scaleX(0);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(-45deg) scaleX(1);
+  }
+}
+
+.title-right {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.title-subtitle {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-family: var(--font-family-serif);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.title-description {
+  font-size: 1.125rem;
+  color: var(--color-text-secondary);
+  line-height: 1.8;
+  max-width: 500px;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+}
+
+/* Scroll Indicator */
+.scroll-indicator {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+  z-index: 5;
+}
+
+.scroll-indicator span {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
+
+.scroll-arrow {
+  font-size: 1.5rem;
+  color: var(--color-accent-gold);
+  display: inline-block;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(12px);
+  }
+}
+
+/* ========================
+   RESPONSIVE DESIGN
+   ======================== */
+
+@media (max-width: 1024px) {
+  .title-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    min-height: auto;
+  }
+
+  .title-initials {
+    font-size: clamp(3rem, 10vw, 7rem);
+  }
+
+  .title-left {
+    align-items: center;
+    text-align: center;
+  }
+
+  .diagonal-line {
+    display: none;
+  }
+
+  .title-subtitle {
+    font-size: clamp(1.25rem, 3vw, 2rem);
+  }
+}
+
+@media (max-width: 768px) {
+  .title-card {
+    min-height: 80vh;
+  }
+
+  .title-grid {
+    min-height: auto;
+    gap: 1rem;
+  }
+
+  .title-initials {
+    font-size: clamp(2.5rem, 8vw, 4rem);
+  }
+
+  .title-subtitle {
+    font-size: 1.25rem;
+  }
+
+  .title-description {
+    font-size: 1rem;
+    max-width: 100%;
+  }
+
+  .title-right {
+    align-items: center;
+    text-align: center;
+  }
+
+  .title-right p {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .title-card {
+    min-height: 100vh;
+    padding-bottom: 80px;
+  }
+
+  .title-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .title-initials {
+    font-size: clamp(2rem, 7vw, 3rem);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .title-subtitle {
+    font-size: 1.125rem;
+  }
+
+  .title-description {
+    font-size: 0.95rem;
+  }
+
+  .scroll-indicator {
+    bottom: 20px;
+  }
+
+  .scroll-indicator span {
+    font-size: 0.75rem;
+  }
+
+  .scroll-arrow {
+    font-size: 1.25rem;
+  }
+}
+
+/* ACCESSIBILITY */
+@media (prefers-reduced-motion: reduce) {
+  .title-initials .char,
+  .diagonal-line,
+  .scroll-arrow {
+    animation: none;
+  }
+}

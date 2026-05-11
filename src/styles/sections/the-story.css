@@ -1,0 +1,406 @@
+/* ========================
+   THE STORY STYLES
+   About Section Redesign
+   ======================== */
+
+.the-story {
+  position: relative;
+  background: var(--color-bg-dark);
+  padding: var(--spacing-3xl) 0;
+  overflow: hidden;
+}
+
+.story-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6rem;
+  align-items: start;
+  position: relative;
+  z-index: 2;
+}
+
+/* LEFT COLUMN - NARRATIVE TEXT */
+.story-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  padding: 2rem 0;
+}
+
+.story-item {
+  opacity: 0;
+}
+
+.story-title {
+  font-size: 1.75rem;
+  color: var(--color-accent-gold);
+  font-family: var(--font-family-serif);
+  margin-bottom: var(--spacing-md);
+  font-weight: 700;
+}
+
+.story-text {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  line-height: 1.8;
+  font-weight: 300;
+}
+
+/* RIGHT COLUMN - IMAGE STACK */
+.story-right {
+  position: relative;
+  height: 600px;
+}
+
+.image-stack {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.image-card {
+  position: absolute;
+  width: 280px;
+  height: 320px;
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all var(--duration-normal) var(--easing-smooth);
+  box-shadow: var(--shadow-lg);
+}
+
+.image-card:hover {
+  box-shadow: var(--shadow-xl);
+}
+
+.image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.125rem;
+  color: var(--color-text-primary);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  position: relative;
+  overflow: hidden;
+}
+
+.image-placeholder::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 50%);
+  pointer-events: none;
+}
+
+.bg-purple {
+  background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%);
+}
+
+.bg-gold {
+  background: linear-gradient(135deg, #A855F7 0%, #8B5CF6 100%);
+}
+
+.bg-cyan {
+  background: linear-gradient(135deg, #C084FC 0%, #A855F7 100%);
+}
+
+/* Card Positioning - 3D Stacked Effect */
+.card-1 {
+  top: 0;
+  left: 0;
+  z-index: 3;
+}
+
+.card-2 {
+  top: 80px;
+  left: 120px;
+  z-index: 2;
+  transform: rotate(-3deg);
+}
+
+.card-3 {
+  top: 160px;
+  left: 240px;
+  z-index: 1;
+  transform: rotate(3deg);
+}
+
+.card-2:hover {
+  z-index: 4;
+}
+
+.card-3:hover {
+  z-index: 4;
+}
+
+/* ACCENT ELEMENTS */
+.story-accents {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.accent-circle {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(139, 92, 246, 0.1);
+}
+
+.accent-1 {
+  width: 300px;
+  height: 300px;
+  top: -100px;
+  right: -100px;
+}
+
+.accent-2 {
+  width: 200px;
+  height: 200px;
+  bottom: -50px;
+  left: 10%;
+  border-color: rgba(157, 78, 221, 0.1);
+}
+
+/* ========================
+   RESPONSIVE DESIGN
+   ======================== */
+
+@media (max-width: 1024px) {
+  .story-grid {
+    grid-template-columns: 1fr;
+    gap: 4rem;
+  }
+
+  .story-right {
+    height: 400px;
+  }
+
+  .image-card {
+    width: 220px;
+    height: 260px;
+  }
+
+  .card-2 {
+    top: 60px;
+    left: 90px;
+  }
+
+  .card-3 {
+    top: 120px;
+    left: 180px;
+  }
+}
+
+@media (max-width: 768px) {
+  .the-story {
+    padding: var(--spacing-2xl) 0;
+  }
+
+  .story-grid {
+    gap: 2rem;
+  }
+
+  .story-left {
+    gap: 2rem;
+  }
+
+  .story-title {
+    font-size: 1.5rem;
+  }
+
+  .story-text {
+    font-size: 0.95rem;
+  }
+
+  .story-right {
+    height: 350px;
+    margin-top: var(--spacing-lg);
+  }
+
+  .image-card {
+    width: 200px;
+    height: 240px;
+  }
+
+  .card-1 {
+    top: 0;
+    left: 0;
+  }
+
+  .card-2 {
+    top: 50px;
+    left: 80px;
+  }
+
+  .card-3 {
+    top: 100px;
+    left: 160px;
+  }
+}
+
+@media (max-width: 768px) {
+  .story-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .story-left {
+    gap: 2rem;
+    padding: 0;
+  }
+
+  .story-title {
+    font-size: 1.3rem;
+  }
+
+  .story-text {
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .story-right {
+    height: auto;
+    min-height: 400px;
+    margin-top: var(--spacing-lg);
+  }
+
+  .image-card {
+    width: 200px;
+    height: 240px;
+  }
+
+  .card-2 {
+    top: 30px;
+    left: 60px;
+  }
+
+  .card-3 {
+    top: 60px;
+    left: 120px;
+  }
+
+  .accent-1 {
+    opacity: 0.2;
+  }
+
+  .accent-2 {
+    opacity: 0.2;
+  }
+}
+
+@media (max-width: 480px) {
+  .story-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .story-left {
+    gap: 1.5rem;
+    padding: 0;
+  }
+
+  .story-title {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+  }
+
+  .story-text {
+    font-size: 0.88rem;
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+
+  .story-right {
+    height: auto;
+    min-height: 320px;
+    margin-top: var(--spacing-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .image-stack {
+    position: relative;
+    width: 100%;
+    height: 320px;
+  }
+
+  .image-card {
+    width: 140px;
+    height: 170px;
+  }
+
+  .card-2 {
+    top: 20px;
+    left: 50px;
+  }
+
+  .card-3 {
+    top: 40px;
+    left: 100px;
+  }
+
+  .accent-1 {
+    display: none;
+  }
+
+  .accent-2 {
+    width: 120px;
+    height: 120px;
+    opacity: 0.15;
+  }
+}
+
+/* MOBILE PROCESS CARDS IN STORY - FALLBACK */
+@media (max-width: 768px) {
+
+  .story-cards,
+  .floating-cards,
+  .story-stack {
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    transform: scale(1);
+  }
+
+  .story-card,
+  .floating-card {
+    position: relative !important;
+    width: 100%;
+    max-width: 280px;
+    height: auto;
+    border-radius: 16px;
+  }
+
+  .story-card:nth-child(1),
+  .floating-card:nth-child(1) {
+    transform: none;
+    z-index: 3;
+  }
+
+  .story-card:nth-child(2),
+  .floating-card:nth-child(2) {
+    transform: none;
+    z-index: 2;
+  }
+
+  .story-card:nth-child(3),
+  .floating-card:nth-child(3) {
+    transform: none;
+    z-index: 1;
+  }
+}
