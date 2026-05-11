@@ -117,7 +117,7 @@ export default function Pricing() {
 
               <div className="pricing-card-bottom">
                 <a
-                  href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Hi 👋 I’m interested in the ${pkg.tier.toUpperCase()} package for video editing.`)}`}
+                  href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Hi I’m interested in the ${pkg.tier.toUpperCase()} package for video editing.`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="pricing-button"

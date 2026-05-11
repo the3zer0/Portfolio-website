@@ -45,9 +45,9 @@ export default function Footer() {
               <a href="https://www.facebook.com/jannatulmaowa.nila" className="footer-social">
                 <img src={asset('facebook.png')} alt="Facebook" />
               </a>
-              <div className="footer-social">
+              <a href="https://www.linkedin.com/in/rahat-mahmud-30338b339/" className="footer-social">
                 <img src={asset('linkedin.png')} alt="LinkedIn" />
-              </div>
+              </a>
             </div>
           </div>
           <p className="footer-copy">© 2026 MAOWA.Me · Jannatul Maowa Runa · All Rights Reserved</p>

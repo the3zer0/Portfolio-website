@@ -1,5 +1,4 @@
-import { useState, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { useState } from 'react';
 import { asset } from '../utils/asset';
 import '../styles/process-cards.css';
 
@@ -31,120 +30,82 @@ const cards = [
 ];
 
 export default function ProcessCards() {
-  const [hoveredCard, setHoveredCard] = useState(null);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const containerRef = useRef(null);
-  const handleMouseMove = (e, cardId) => {
-    if (containerRef.current) {
-      const rect = containerRef.current.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width;
-      const y = (e.clientY - rect.top) / rect.height;
-      setMousePosition({ x, y });
-    }
+  const [activeCard, setActiveCard] = useState(0);
+  const [orientation, setOrientation] = useState('horizontal');
+
+  const toggleOrientation = () => {
+    setOrientation((o) => (o === 'horizontal' ? 'vertical' : 'horizontal'));
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.3,
-      },
-    },
-  };
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 40, scale: 0.95 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        duration: 0.7,
-        ease: 'easeOut',
-      },
-    },
-  };
-
-  const floatingAnimation = {
-    animate: {
-      y: [0, -10, 0],
-      transition: {
-        duration: 4,
-        repeat: Infinity,
-        ease: 'easeInOut',
-      },
-    },
+  const handleNextCard = (event) => {
+    event.stopPropagation();
+    setActiveCard(current => (current === cards.length - 1 ? 0 : current + 1));
   };
 
   return (
-    <motion.div
-      className="process-cards-container"
-      ref={containerRef}
-      variants={containerVariants}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.2 }}
-    >
+    <div className={`process-cards-container ${orientation === 'vertical' ? 'vertical' : 'horizontal'}`}>
       {/* Background glow effects */}
       <div className="process-glow process-glow-1"></div>
       <div className="process-glow process-glow-2"></div>
-      <div className="process-glow process-glow-3"></div>      <div className="process-cards-stack">
-        {cards.map((card, index) => (
-          <motion.div
-            key={card.id}
-            className={`process-card ${hoveredCard === card.id ? 'hovered' : ''} ${
-              hoveredCard !== null && hoveredCard !== card.id ? 'dimmed' : ''
-            }`}
-            variants={cardVariants}
-            onMouseEnter={() => setHoveredCard(card.id)}
-            onMouseLeave={() => setHoveredCard(null)}
-            onMouseMove={(e) => handleMouseMove(e, card.id)}
-            animate={{
-              ...floatingAnimation.animate,
-              scale: hoveredCard === card.id ? 1.05 : 1 - index * 0.1,
-              zIndex: hoveredCard === card.id ? 100 : cards.length - index,
-            }}
-            transition={{
-              scale: { duration: 0.4, ease: 'easeOut' },
-              y: floatingAnimation.animate.y.transition,
-            }}
-            style={{
-              '--delay': `${index * 0.2}s`,
-              '--card-index': index,
-            }}
-          >
-            {/* Card inner glow */}
-            <div className="card-glow-inner"></div>
+      <div className="process-glow process-glow-3"></div>
+      <button
+        type="button"
+        className="orientation-toggle"
+        onClick={toggleOrientation}
+        aria-pressed={orientation === 'vertical'}
+        aria-label="Toggle card orientation"
+      >
+        {orientation === 'horizontal' ? '↕' : '↔'}
+      </button>
 
-            {/* Card content */}
-            <div className="process-card-content">
-              <div className="card-icon">
-                <img src={card.icon} alt={card.title} />
+      <div className={`process-cards-stack ${orientation === 'vertical' ? 'vertical' : ''}`}>
+        {cards.map((card, index) => {
+          const isActive = index === activeCard;
+          const isPrev = index === (activeCard + cards.length - 1) % cards.length;
+          const isNext = index === (activeCard + 1) % cards.length;
+
+          return (
+            <div
+              key={card.id}
+              className={`process-card ${isActive ? 'is-active' : ''} ${isPrev ? 'is-prev' : ''} ${isNext ? 'is-next' : ''}`}
+              aria-hidden={!isActive}
+            >
+              {/* Card content */}
+              <div className="process-card-content">
+                <div className="card-icon">
+                  <img src={card.icon} alt={card.title} />
+                </div>
+
+                <div className="card-header">
+                  <h3 className="card-title">{card.title}</h3>
+                  <p className="card-subtitle">{card.subtitle}</p>
+                </div>
+
+                <p className="card-description">{card.description}</p>
+
+                <div className="card-footer">
+                  <span className="card-number">0{card.id}</span>
+                  <button
+                    type="button"
+                    className="card-arrow-button"
+                    onClick={isActive ? handleNextCard : undefined}
+                    disabled={!isActive}
+                    aria-label={`Go to next process slide from ${card.title}`}
+                  >
+                    <div className="card-arrow">→</div>
+                  </button>
+                </div>
               </div>
 
-              <div className="card-header">
-                <h3 className="card-title">{card.title}</h3>
-                <p className="card-subtitle">{card.subtitle}</p>
-              </div>
+              {/* Gradient border */}
+              <div className="card-border"></div>
 
-              <p className="card-description">{card.description}</p>
-
-              <div className="card-footer">
-                <span className="card-number">0{card.id}</span>
-                <div className="card-arrow">→</div>
-              </div>
+              {/* Card backdrop blur effect */}
+              <div className="card-backdrop"></div>
             </div>
-
-            {/* Gradient border */}
-            <div className="card-border"></div>
-
-            {/* Card backdrop blur effect */}
-            <div className="card-backdrop"></div>
-          </motion.div>
-        ))}
+          );
+        })}
       </div>
-    </motion.div>
+    </div>
   );
 }

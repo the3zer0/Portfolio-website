@@ -370,20 +370,20 @@ button {
 }
 
 .hero-stats {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--spacing-2xl);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(16px, 2vw, var(--spacing-2xl));
   align-items: stretch;
+  width: 100%;
+  max-width: 1120px;
   animation: fadeInUp 1s ease-out 0.8s backwards;
   position: relative;
   z-index: 10;
 }
 
 .hero-stats > div {
-  flex: 1 1 220px; /* grow, shrink, preferred basis */
-  min-width: 160px;
-  max-width: 360px;
+  min-width: 0;
+  max-width: none;
   text-align: center;
 }
 
