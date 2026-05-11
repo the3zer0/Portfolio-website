@@ -1,4 +1,5 @@
 import { Fragment } from 'react'
+import { asset } from '../utils/asset'
 
 export default function Hero() {
   return (
@@ -20,19 +21,19 @@ export default function Hero() {
       {/* Floating tool logos (decorative) */}
       <div className="hero-floating" aria-hidden="true">
         <div className="logo logo--ae">
-          <img src="/after-effects.png" alt="" />
+          <img src={asset('after-effects.png')} alt="" />
         </div>
 
         <div className="logo logo--ps">
-          <img src="/photoshop.png" alt="" />
+          <img src={asset('photoshop.png')} alt="" />
         </div>
 
         <div className="logo logo--ai">
-          <img src="/illustrator.png" alt="" />
+          <img src={asset('illustrator.png')} alt="" />
         </div>
 
         <div className="logo logo--pr">
-          <img src="/premiere-pro.png" alt="" />
+          <img src={asset('premiere-pro.png')} alt="" />
         </div>
 
         <span className="hero-spark hero-spark--1"></span>

@@ -123,7 +123,7 @@ export default function ClientImpact() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true, amount: 0.3 }}
-        >          <h2 className="impact-title">Client Reviews</h2>
+        >          <h2 className="impact-title">Client's Reviews</h2>
           <p className="impact-subtitle">
             Hear from brands and creators who transformed their vision with me.
           </p>

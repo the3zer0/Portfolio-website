@@ -1,4 +1,5 @@
 import '../styles/whatsapp-float.css'
+import { asset } from '../utils/asset'
 
 export default function FloatingWhatsApp() {
   const phone = '8801744641685'
@@ -15,7 +16,7 @@ export default function FloatingWhatsApp() {
       title="Chat on WhatsApp"
     >
       <span className="wa-float-ring" aria-hidden="true" />
-      <img src="/whatsapp.svg" alt="" aria-hidden="true" className="wa-float-icon" />
+      <img src={asset('whatsapp.svg')} alt="" aria-hidden="true" className="wa-float-icon" />
     </a>
   )
 }

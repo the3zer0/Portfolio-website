@@ -1,3 +1,5 @@
+import { asset } from '../utils/asset'
+
 export default function Footer() {
   return (
     <footer>
@@ -35,16 +37,16 @@ export default function Footer() {
             <p className="footer-section-title">Follow Us</p>
             <div className="footer-socials">
               <a href="https://www.youtube.com/@maowa2.0" className="footer-social">
-                <img src="/youtube.png" alt="YouTube" />
+                <img src={asset('youtube.png')} alt="YouTube" />
               </a>
               <a href="https://www.instagram.com/meaw_maowa" className="footer-social">
-                <img src="/instagram.png" alt="Instagram" />
+                <img src={asset('instagram.png')} alt="Instagram" />
               </a>
               <a href="https://www.facebook.com/jannatulmaowa.nila" className="footer-social">
-                <img src="/facebook.png" alt="Facebook" />
+                <img src={asset('facebook.png')} alt="Facebook" />
               </a>
               <div className="footer-social">
-                <img src="/linkedin.png" alt="LinkedIn" />
+                <img src={asset('linkedin.png')} alt="LinkedIn" />
               </div>
             </div>
           </div>

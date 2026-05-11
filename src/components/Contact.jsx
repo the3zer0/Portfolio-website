@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react'
 import emailjs from '@emailjs/browser'
+import { asset } from '../utils/asset'
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -130,7 +131,7 @@ export default function Contact() {
           </div>
         </div>        <div className="contact-item">
           <div className="contact-icon">
-            <img src="/instagram.png" alt="Instagram" />
+            <img src={asset('instagram.png')} alt="Instagram" />
           </div>
           <div>
             <div className="contact-label">Instagram</div>
@@ -139,7 +140,7 @@ export default function Contact() {
         </div>
         <div className="contact-item">
           <div className="contact-icon">
-            <img src="/response.png" alt="Response Time" />
+            <img src={asset('response.png')} alt="Response Time" />
           </div>
           <div>
             <div className="contact-label">Response Time</div>
@@ -148,7 +149,7 @@ export default function Contact() {
         </div>
         <div className="contact-item">
           <div className="contact-icon">
-            <img src="/location.png" alt="Location" />
+            <img src={asset('location.png')} alt="Location" />
           </div>
           <div>
             <div className="contact-label">Location</div>

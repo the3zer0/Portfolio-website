@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { asset } from '../utils/asset';
 import '../styles/process-cards.css';
 
 const cards = [
@@ -8,7 +9,7 @@ const cards = [
     title: 'Strategy & Hook',
     subtitle: 'CAPTURE ATTENTION FAST',
     description: 'Crafting powerful hooks and content strategy designed to stop the scroll and instantly grab viewer attention.',
-    icon: '/radar.png',
+    icon: asset('radar.png'),
     color: 'from-purple-500 to-blue-500',
   },
   {
@@ -16,7 +17,7 @@ const cards = [
     title: 'Editing & Retention',
     subtitle: 'KEEP THEM WATCHING',
     description: 'Cinematic editing, pacing, motion design, and storytelling focused on maximizing engagement and viewer retention.',
-    icon: '/activity.png',
+    icon: asset('activity.png'),
     color: 'from-blue-500 to-cyan-500',
   },
   {
@@ -24,7 +25,7 @@ const cards = [
     title: 'Delivery & Growth',
     subtitle: 'CONTENT THAT PERFORMS',
     description: 'Platform-optimized delivery and strategic formatting built to increase reach, audience growth, and long-term impact.',
-    icon: '/trending.png',
+    icon: asset('trending.png'),
     color: 'from-cyan-500 to-purple-500',
   },
 ];
