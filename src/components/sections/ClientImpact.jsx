@@ -6,7 +6,7 @@ const testimonials = [
   {
     id: 1,
     quote: "The edits matched our brand style perfectly and helped our content feel more modern and engaging across social platforms.",
-    author: "IstionBD",
+    author: "IstitionBD",
     role: "Brand Collaboration",
     rating: 5,
   },

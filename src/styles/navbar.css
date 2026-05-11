@@ -96,7 +96,7 @@
 .nav-links a.nav-cta {
   margin-left: var(--spacing-lg);
   padding: 14px 36px;
-  min-width: 250px;
+  min-width: clamp(160px, 18vw, 280px);
   background: linear-gradient(135deg, var(--color-accent-cyan) 0%, var(--color-accent-purple) 100%);
   color: var(--color-bg-dark) !important;
   border-radius: 12px;
@@ -197,7 +197,7 @@
   .nav-links a.nav-cta {
     margin-left: var(--spacing-md);
     padding: 12px 28px;
-    min-width: 220px;
+    min-width: clamp(140px, 28vw, 240px);
     font-size: 13px;
   }
 }

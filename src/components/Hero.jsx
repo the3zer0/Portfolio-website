@@ -1,5 +1,18 @@
-import { Fragment } from 'react'
 import { asset } from '../utils/asset'
+
+const tools = [
+  { name: 'After Effects', logo: 'after-effects.png', className: 'logo--ae' },
+  { name: 'Photoshop', logo: 'photoshop.png', className: 'logo--ps' },
+  { name: 'Illustrator', logo: 'illustrator.png', className: 'logo--ai' },
+  { name: 'Premiere Pro', logo: 'premiere-pro.png', className: 'logo--pr' },
+]
+
+const stats = [
+  { value: '10M+', label: 'Content Views' },
+  { value: '1.5+', label: 'Years Experience' },
+  { value: '10+', label: 'Happy Clients' },
+  { value: '3K+', label: 'Hours in Premiere' },
+]
 
 export default function Hero() {
   return (
@@ -12,53 +25,32 @@ export default function Hero() {
         <span className="yellow hero-emphasis">EDITS.</span>
       </h1>
       <p className="hero-sub fade-up">
-        Crafting <span>high-retention YouTube videos</span> and <span>viral short-form content</span> that turn attention into audiences — and audience into revenue.
+        Crafting <span>high-retention YouTube videos</span> and <span>viral short-form content</span> that turn attention into audiences, and audiences into revenue.
       </p>
       <div className="hero-actions fade-up">
         <a href="#portfolio" className="btn-primary">View Portfolio</a>
         <a href="#contact" className="btn-outline">Start a Project</a>
       </div>
-      {/* Floating tool logos (decorative) */}
       <div className="hero-floating" aria-hidden="true">
-        <div className="logo logo--ae">
-          <img src={asset('after-effects.png')} alt="" />
-        </div>
-
-        <div className="logo logo--ps">
-          <img src={asset('photoshop.png')} alt="" />
-        </div>
-
-        <div className="logo logo--ai">
-          <img src={asset('illustrator.png')} alt="" />
-        </div>
-
-        <div className="logo logo--pr">
-          <img src={asset('premiere-pro.png')} alt="" />
-        </div>
-
+        {tools.map(tool => (
+          <div key={tool.name} className={`logo ${tool.className}`}>
+            <img src={asset(tool.logo)} alt="" />
+          </div>
+        ))}
         <span className="hero-spark hero-spark--1"></span>
         <span className="hero-spark hero-spark--2"></span>
         <span className="hero-spark hero-spark--3"></span>
         <span className="hero-spark hero-spark--4"></span>
       </div>
       <div className="hero-stats fade-up">
-        <div>
-          <div className="stat-num">10M+</div>
-          <div className="stat-label">CONTENT VIEWS</div>
-        </div>
-        <div>
-          <div className="stat-num">1.5+</div>
-          <div className="stat-label">Years Experience</div>
-        </div>
-        <div>
-          <div className="stat-num">10+</div>
-          <div className="stat-label">Happy Clients</div>
-        </div>
-        <div>
-          <div className="stat-num">3K+</div>
-          <div className="stat-label">Hours in Premiere</div>
-        </div>
-      </div>      <div className="hero-scroll">
+        {stats.map(stat => (
+          <div key={stat.label}>
+            <div className="stat-num">{stat.value}</div>
+            <div className="stat-label">{stat.label}</div>
+          </div>
+        ))}
+      </div>
+      <div className="hero-scroll">
         <div className="scroll-line"></div>
         <span className="scroll-text">Scroll</span>
       </div>

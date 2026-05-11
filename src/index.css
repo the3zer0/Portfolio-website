@@ -197,9 +197,10 @@ footer::before {
 }
 
 .footer-left-bottom {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
+  display: flex;
   gap: 60px;
+  align-items: flex-start;
+  flex-wrap: wrap;
 }
 
 .footer-contact-column {
