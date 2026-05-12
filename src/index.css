@@ -203,6 +203,14 @@ footer::before {
   flex-wrap: wrap;
 }
 
+/* Desktop: increase spacing between Contact and Address, align headings on one line */
+@media (min-width: 769px) {
+  .footer-left-bottom {
+    gap: 280px;
+    align-items: baseline;
+  }
+}
+
 .footer-contact-column {
   display: flex;
   flex-direction: column;
@@ -779,6 +787,7 @@ footer::before {
 @media (max-width: 768px) {
   .contact {
     padding: 60px 24px;
+    text-align: center;
   }
 
   .contact-header {
@@ -793,11 +802,15 @@ footer::before {
     grid-template-columns: 1fr;
     gap: 40px;
     margin-bottom: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .contact-info-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
+    justify-items: center;
   }
 
   .contact-form {
@@ -813,15 +826,26 @@ footer::before {
   .contact-info-grid {
     grid-template-columns: 1fr;
     gap: 12px;
+    justify-items: center;
+    align-items: center;
   }
 
   .contact-item {
     padding: 20px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .contact-value {
+    text-align: center;
   }
 }
 
 /* Mobile Footer */
-@media (max-width: 768px) {
+@media (max-width: 600px) {
   footer {
     padding: 32px 24px;
   }
@@ -832,18 +856,51 @@ footer::before {
   }
 
   .footer-right {
-    text-align: left;
+    text-align: center;
+    align-items: center;
   }
 
   .footer-socials {
-    justify-content: flex-start;
+    justify-content: center;
   }
 
   .footer-section {
     width: 100%;
   }
+
+  /* Center contact columns on mobile */
+  .footer-left-bottom {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .footer-contact-column {
+    align-items: center;
+    text-align: center;
+  }
+
+  .footer-contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .footer-info-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .footer-address-column {
+    align-items: center;
+    text-align: center;
+  }
 }
 
+/* Extra small mobile */
 @media (max-width: 480px) {
   footer {
     padding: 28px 16px;
