@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { asset } from '../utils/asset'
 
 const tools = [
@@ -14,7 +15,80 @@ const stats = [
   { value: '3K+', label: 'Hours in Premiere' },
 ]
 
+const YOUTUBE_VIDEO_ID = 'HnvYalV-BOU'
+const YOUTUBE_EMBED_URL = `https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1&mute=1&controls=1&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3`
+
 export default function Hero() {
+  const playerContainerRef = useRef(null)
+  const ytPlayerRef = useRef(null)
+  const savedTimeRef = useRef(0)
+  const playerReadyRef = useRef(false)
+
+  useEffect(() => {
+    let mounted = true
+
+    function createPlayer() {
+      if (!mounted || !playerContainerRef.current || !window.YT) return
+      ytPlayerRef.current = new window.YT.Player(playerContainerRef.current, {
+        width: '100%',
+        height: '100%',
+        videoId: YOUTUBE_VIDEO_ID,
+        playerVars: {
+          autoplay: 1,
+          mute: 1,
+          controls: 1,
+          rel: 0,
+          modestbranding: 1,
+          playsinline: 1,
+        },
+        events: {
+          onReady: (e) => {
+            playerReadyRef.current = true
+            try { e.target.mute(); e.target.playVideo(); } catch (err) {}
+          },
+        },
+      })
+    }
+
+    if (window.YT && window.YT.Player) {
+      createPlayer()
+    } else {
+      const tag = document.createElement('script')
+      tag.src = 'https://www.youtube.com/iframe_api'
+      document.body.appendChild(tag)
+      window.onYouTubeIframeAPIReady = () => {
+        if (mounted) createPlayer()
+      }
+    }
+
+    const node = playerContainerRef.current?.closest('.featured-video-art') || playerContainerRef.current
+    let observer = null
+    if (node) {
+      observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!ytPlayerRef.current || !playerReadyRef.current) return
+          try {
+            if (entry.intersectionRatio < 0.5) {
+              savedTimeRef.current = ytPlayerRef.current.getCurrentTime() || 0
+              ytPlayerRef.current.pauseVideo()
+            } else {
+              ytPlayerRef.current.seekTo(savedTimeRef.current || 0, true)
+              ytPlayerRef.current.playVideo()
+            }
+          } catch (err) {}
+        })
+      }, { threshold: [0.5] })
+      observer.observe(node)
+    }
+
+    return () => {
+      mounted = false
+      if (observer) observer.disconnect()
+      if (window.onYouTubeIframeAPIReady) window.onYouTubeIframeAPIReady = null
+      try { if (ytPlayerRef.current && ytPlayerRef.current.destroy) ytPlayerRef.current.destroy() } catch (err) {}
+    }
+  }, [])
+
   return (
     <>
       <section className="hero" id="home">
@@ -34,7 +108,7 @@ export default function Hero() {
             <a href="#contact" className="btn-outline">Start a Project</a>
           </div>
           <div className="hero-stats fade-up">
-            {stats.map(stat => (
+            {stats.map((stat) => (
               <div key={stat.label} className="hero-stat">
                 <div className="stat-num">{stat.value}</div>
                 <div className="stat-label">{stat.label}</div>
@@ -43,7 +117,7 @@ export default function Hero() {
           </div>
         </div>
         <div className="hero-floating" aria-hidden="true">
-          {tools.map(tool => (
+          {tools.map((tool) => (
             <div key={tool.name} className={`logo ${tool.className}`}>
               <img src={asset(tool.logo)} alt="" />
             </div>
@@ -64,51 +138,23 @@ export default function Hero() {
         <div className="featured-container">
           <div className="featured-header fade-up">
             <span className="featured-label">Featured Work</span>
-            <h2>MAOWA'S FOCUS</h2>
+            <h2>MAOWA'S Best Work</h2>
             <p className="featured-subtitle">Cinematic storytelling designed to capture attention, increase retention, and create lasting impact.</p>
           </div>
 
           <div className="featured-card fade-up">
             <div className="featured-video-wrapper">
               <div className="featured-video-art">
-                <div className="featured-video-glow"></div>
-                <div className="featured-video-vignette"></div>
-                <div className="featured-city featured-city--left"></div>
-                <div className="featured-city featured-city--right"></div>
-                <div className="featured-smoke"></div>
-                <div className="featured-figure"></div>
-                <div className="featured-overlay-text">
-                  <div className="featured-title-main">FOCUS</div>
-                  <div className="featured-title-sub">THE SILENT WEAPON</div>
-                </div>
-                <button className="featured-play-btn" type="button" aria-label="Play video">
-                  <span></span>
-                </button>
-              </div>
-
-              <div className="featured-controls">
-                <div className="featured-progress">
-                  <span></span>
-                </div>
-                <div className="featured-toolbar">
-                  <div className="featured-buttons">
-                    <span className="featured-icon">▶</span>
-                    <span className="featured-icon">⏭</span>
-                    <span className="featured-icon">🔊</span>
-                  </div>
-                  <span className="featured-time">0:00 / 0:45</span>
-                  <div className="featured-actions">
-                    <span className="featured-icon">⚙</span>
-                    <span className="featured-icon">⛶</span>
-                  </div>
-                </div>
+                <div
+                  ref={playerContainerRef}
+                  className="featured-video-iframe is-ready"
+                  style={{ width: '100%', height: '100%' }}
+                />
               </div>
             </div>
 
             <div className="featured-meta">
-              <span>High-retention</span> edits. 
-  <span> Strong storytelling.</span> 
-  <span> Real impact.</span>
+              <span>High-retention</span> edits. <span>Strong storytelling.</span> <span>Real impact.</span>
             </div>
           </div>
         </div>

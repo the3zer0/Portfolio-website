@@ -1,55 +1,41 @@
 import { useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
+import { asset } from '../../utils/asset';
 import { motion, AnimatePresence } from 'framer-motion';
 import '../../styles/sections/portfolio-ecosystem.css';
 
 const projects = [
+ 
   {
-    id: 1,
-    title: "Brand Evolution",
-    category: "branding",
-    year: 2024,
-    description: "Complete visual rebrand for tech startup",
-    color: "#9d4edd",
+    id: 6,
+    title: "Typography in Motion",
+    category: "Practice",
+    year: 2026,
+    description: "YouTube Short — featured practice piece",
+    color: "#2dd4bf",
+    videoId: 'QozVu0nCeb8',
+    poster: 'typo.png',
   },
   {
-    id: 2,
-    title: "Digital Storytelling",
-    category: "commercial",
-    year: 2024,
-    description: "Cinematic commercial for luxury brand",
-    color: "#d4af37",
-  },
-  {
-    id: 3,
-    title: "Social Impact",
-    category: "documentary",
-    year: 2023,
-    description: "Documentary short about social change",
-    color: "#ff006e",
-  },
-  {
-    id: 4,
-    title: "Corporate Vision",
-    category: "commercial",
-    year: 2023,
-    description: "Corporate video for Fortune 500 company",
-    color: "#9d4edd",
-  },
-  {
-    id: 5,
-    title: "Fashion Forward",
-    category: "branding",
-    year: 2023,
-    description: "Fashion brand campaign with motion design",
-    color: "#00d9ff",
+    id: 7,
+    title: "Typography",
+    category: "Practice",
+    year: 2026,
+    description: "YouTube Short practice clip",
+    color: "#f97316",
+    videoId: 'ACrOPLjY4xA',
+    poster: 'p.png',
   },
 ];
 
-const categories = ["all", "branding", "commercial", "documentary"];
+const categories = ["all", "branding", "Practice", "Advertising"];
 
 export default function PortfolioEcosystem() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [selectedProject, setSelectedProject] = useState(null);
+  const [modalPlaying, setModalPlaying] = useState(false);
+  const [modalPaused, setModalPaused] = useState(false);
+  const iframeRef = useRef(null);
   const containerRef = useRef(null);
 
   const filteredProjects =
@@ -136,9 +122,12 @@ export default function PortfolioEcosystem() {
                   className="project-card"
                   whileHover={{ y: -8, scale: 1.02 }}
                   transition={{ duration: 0.3, ease: "easeOut" }}
-                  onClick={() => setSelectedProject(project)}
+                  onClick={() => { setSelectedProject(project); setModalPlaying(false); }}
                 >
                   <div className="project-image" style={{ backgroundColor: project.color }}>
+                    {project.poster ? (
+                      <img src={asset(project.poster)} alt={project.title} className="project-thumb" />
+                    ) : null}
                     <motion.div
                       className="project-overlay"
                       initial={{ opacity: 0 }}
@@ -184,12 +173,12 @@ export default function PortfolioEcosystem() {
       {/* Project Modal */}
       <AnimatePresence>
         {selectedProject && (
-          <motion.div
+            <motion.div
             className="project-modal-overlay"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setSelectedProject(null)}
+              onClick={() => { setSelectedProject(null); setModalPlaying(false); }}
           >
             <motion.div
               className="project-modal"
@@ -199,20 +188,63 @@ export default function PortfolioEcosystem() {
               transition={{ duration: 0.4, ease: "easeOut" }}
               onClick={e => e.stopPropagation()}
             >
-              <button
-                className="modal-close"
-                onClick={() => setSelectedProject(null)}
-              >
-                ✕
-              </button>
+              {/* close button rendered via portal to avoid iframe stacking issues */}
 
               <div
                 className="modal-image"
                 style={{ backgroundColor: selectedProject.color }}
               >
-                <div className="modal-video-placeholder">
-                  <span className="play-icon">▶</span>
-                </div>
+                {selectedProject.videoId ? (
+                  <div className="modal-video-area">
+                    {!modalPlaying ? (
+                      <button
+                        type="button"
+                        className="modal-video-poster"
+                        onClick={() => setModalPlaying(true)}
+                        aria-label="Play project video"
+                      >
+                        <img src={asset(selectedProject.poster || 'client.png')} alt={selectedProject.title} />
+                        <span className="play-icon">▶</span>
+                      </button>
+                    ) : (
+                      <>
+                        <iframe
+                          className="modal-iframe"
+                          ref={iframeRef}
+                          src={`https://www.youtube.com/embed/${selectedProject.videoId}?autoplay=1&mute=0&controls=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1`}
+                          title={selectedProject.title}
+                          allow="autoplay; encrypted-media; picture-in-picture"
+                          allowFullScreen
+                          loading="eager"
+                          referrerPolicy="strict-origin-when-cross-origin"
+                        />
+
+                        <button
+                          className={`modal-pause-toggle ${modalPaused ? 'paused' : 'playing'}`}
+                          aria-label={modalPaused ? 'Play video' : 'Pause video'}
+                          onClick={() => {
+                            if (!iframeRef.current) return;
+                            const win = iframeRef.current.contentWindow;
+                            if (!win) return;
+                            if (modalPaused) {
+                              win.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+                              setModalPaused(false);
+                            } else {
+                              win.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                              setModalPaused(true);
+                            }
+                          }}
+                        >
+                          <span className="modal-pause-icon">{modalPaused ? '▶' : '⏸'}</span>
+                        </button>
+                      </>
+                    )}
+                  </div>
+                ) : (
+                  <div className="modal-video-placeholder">
+                    <span className="play-icon">▶</span>
+                  </div>
+                )}
               </div>
 
               <div className="modal-content">
@@ -224,11 +256,27 @@ export default function PortfolioEcosystem() {
                   <span className="meta-year">{selectedProject.year}</span>
                 </div>
 
-                <button className="btn btn-primary">
-                  View Full Project
-                </button>
+                <a
+  href="https://youtube.com/shorts/ACrOPLjY4xA?si=QifFTfh5iG_Vhslt"
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  <button className="btn btn-primary">
+    View Full Project
+  </button>
+</a>
               </div>
             </motion.div>
+              {selectedProject && createPortal(
+                <button
+                  className="modal-close"
+                  onClick={() => { setSelectedProject(null); setModalPlaying(false); }}
+                  aria-label="Close project modal"
+                >
+                  ✕
+                </button>,
+                document.body
+              )}
           </motion.div>
         )}
       </AnimatePresence>

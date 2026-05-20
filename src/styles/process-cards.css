@@ -104,6 +104,68 @@
               inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
+/* ========================
+   CARD COLOR VARIANTS
+   Use the color palette variables from variables.css
+   ======================== */
+
+/* Variant assignment for three cards (first, second, third) */
+.process-cards-stack .process-card:nth-child(1) {
+  --pc-accent: var(--color-accent-purple);
+  --pc-accent-glow: rgba(139, 92, 246, 0.18);
+}
+.process-cards-stack .process-card:nth-child(2) {
+  --pc-accent: var(--color-accent-cyan);
+  --pc-accent-glow: rgba(0, 255, 200, 0.12);
+}
+.process-cards-stack .process-card:nth-child(3) {
+  --pc-accent: var(--color-accent-pink);
+  --pc-accent-glow: rgba(192, 132, 252, 0.14);
+}
+
+/* Apply accent to border, glows, icons and controls */
+.process-cards-stack .process-card .card-border {
+  transition: background 0.45s var(--easing-smooth), opacity 0.45s var(--easing-smooth);
+}
+
+.process-cards-stack .process-card {
+  /* default fallback if variable is not set */
+  --pc-accent: var(--color-accent-gold);
+  --pc-accent-glow: rgba(168, 85, 247, 0.12);
+}
+
+.process-cards-stack .process-card .card-border {
+  background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+}
+
+.process-cards-stack .process-card .card-icon {
+  filter: drop-shadow(0 0 12px var(--pc-accent-glow));
+}
+
+.process-cards-stack .process-card .card-number,
+.process-cards-stack .process-card .card-arrow,
+.process-cards-stack .process-card .card-title {
+  color: var(--pc-accent);
+}
+
+.process-cards-stack .process-card .card-arrow-button {
+  border-color: color-mix(in srgb, var(--pc-accent) 18%, transparent);
+  background: color-mix(in srgb, var(--pc-accent) 6%, transparent);
+}
+
+.process-cards-stack .process-card.is-active {
+  box-shadow: 0 34px 110px rgba(0, 0, 0, 0.38),
+              0 0 72px var(--pc-accent-glow),
+              inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  border-color: color-mix(in srgb, var(--pc-accent) 55%, rgba(255,255,255,0.06));
+}
+
+.process-cards-stack .process-card.is-prev .card-glow-inner,
+.process-cards-stack .process-card.is-next .card-glow-inner {
+  opacity: 0.32;
+}
+
+
 /* Vertical transforms */
 .process-cards-stack.vertical .process-card.is-prev {
   transform: translate(0, -56px) rotate(-6deg) scale(0.94);
