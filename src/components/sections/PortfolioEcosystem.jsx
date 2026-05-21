@@ -7,41 +7,121 @@ import '../../styles/sections/portfolio-ecosystem.css';
 const projects = [
  
   {
-    id: 6,
+    id: 1,
     title: "Typography in Motion",
     category: "Practice",
     year: 2026,
-    description: "YouTube Short — featured practice piece",
+    description: "A simple typography edit. Clean motion, smooth animation, and meaning behind every word.",
+    hook: "Clean motion, smooth rhythm, and meaning behind every word.",
+    tools: ['after-effects.png'],
     color: "#2dd4bf",
     videoId: 'QozVu0nCeb8',
     poster: 'typo.png',
   },
   {
-    id: 7,
+    id: 2,
     title: "Typography",
     category: "Practice",
     year: 2026,
     description: "YouTube Short practice clip",
+    hook: "A compact typography exercise built for short-form attention.",
+    tools: ['after-effects.png', 'premiere-pro.png'],
     color: "#f97316",
     videoId: 'ACrOPLjY4xA',
     poster: 'p.png',
   },
+  {
+    id: 3,
+    title: "Podcast On Client Hunting",
+    category: "Podcast",
+    year: 2025,
+    description: "Featured podcast video",
+    hook: "A podcast edit focused on clarity, pacing, and retention.",
+    tools: ['premiere-pro.png'],
+    color: "#1f2937",
+    videoId: 'HnvYalV-BOU',
+    poster: 'client.png',
+  },
+  {
+    id: 4,
+    title: "AI Advertising Short",
+    categories: ["Advertising", "Using AI"],
+    year: 2026,
+    description: `Created a fully AI-powered commercial video — from concept development to final edit.
+This project combines AI video generation, sound design, and storytelling to create a modern promotional ad experience.
+
+In this project:
+AI Video Generation,
+Typography Animation,
+Sound Design,
+Creative Direction`,
+  hook: "An AI-assisted ad built around motion, sound, and story.",
+  tools: ['after-effects.png', 'chatgpt.png', 'illustrator.png', 'photoshop.png'],
+    color: "#0f172a",
+    videoId: 'ZfNsTScUwpU',
+    poster: 'ai1.png',
+  },
+  {
+    id: 5,
+    title: "Cinematic Motion Graphics in After Effects",
+    category: "Practice",
+    year: 2025,
+    description: `A cinematic motion graphics and typography animation project created using: Adobe After Effects and Adobe Premiere Pro.
+
+This project focuses on:
+
+Time-based animation,
+Cinematic typography,
+Motion design,
+Visual storytelling,
+Dynamic transitions,
+Premium editing aesthetics`,
+  hook: "Cinematic typography with a polished motion-design finish.",
+  tools: ['after-effects.png', 'premiere-pro.png'],
+    color: "#6b21a8",
+    videoId: 'cvcJGoWiTXs',
+    videoUrl: 'https://youtube.com/shorts/cvcJGoWiTXs',
+    poster: 'time.png',
+  },
+  {
+    id: 6,
+    title: "Typography 2026",
+    category: "Practice",
+    year: 2026,
+    description: `A cinematic motion graphics project fully created inside Adobe After Effects. Created using:
+
+  Adobe After Effects,
+  Motion Graphics,
+  Typography Animation,
+  Cinematic Transitions,
+  Sound Design,
+  Visual Effects`,
+    hook: "A cinematic motion graphics experience — crafted entirely inside Adobe After Effects.",
+    tools: ['after-effects.png'],
+    color: "#ef4444",
+    videoId: '835u3xtpiyo',
+    videoUrl: 'https://youtu.be/835u3xtpiyo',
+    poster: 'money.png',
+  },
+  
 ];
 
-const categories = ["all", "branding", "Practice", "Advertising"];
+const categories = ["all","Podcast","Practice", "Advertising", "Using AI"];
 
 export default function PortfolioEcosystem() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [selectedProject, setSelectedProject] = useState(null);
   const [modalPlaying, setModalPlaying] = useState(false);
-  const [modalPaused, setModalPaused] = useState(false);
-  const iframeRef = useRef(null);
   const containerRef = useRef(null);
 
   const filteredProjects =
     activeCategory === "all"
       ? projects
-      : projects.filter(p => p.category === activeCategory);
+      : projects.filter(p =>
+          Array.isArray(p.categories)
+            ? p.categories.includes(activeCategory)
+            : p.category === activeCategory
+        );
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -65,9 +145,17 @@ export default function PortfolioEcosystem() {
     },
     exit: { opacity: 0, scale: 0.9, y: 20 },
   };
+
+  const getSectorLabel = project =>
+    (Array.isArray(project.categories) ? project.categories : [project.category])
+      .filter(Boolean)
+      .join(' / ')
+      .replace(/-/g, ' ');
+
   return (
     <section id="portfolio" className="portfolio-ecosystem" ref={containerRef}>
-      <div className="container">        {/* Section Header */}
+      <div className="container">
+        {/* Section Header */}
         <motion.div
           className="ecosystem-header"
           initial={{ opacity: 0, y: 20 }}
@@ -124,7 +212,7 @@ export default function PortfolioEcosystem() {
                   transition={{ duration: 0.3, ease: "easeOut" }}
                   onClick={() => { setSelectedProject(project); setModalPlaying(false); }}
                 >
-                  <div className="project-image" style={{ backgroundColor: project.color }}>
+                  <div className="project-image" style={{ backgroundColor: '#000' }}>
                     {project.poster ? (
                       <img src={asset(project.poster)} alt={project.title} className="project-thumb" />
                     ) : null}
@@ -148,16 +236,19 @@ export default function PortfolioEcosystem() {
                       {project.title}
                     </motion.h3>
 
-                    <p className="project-category">{project.category.replace(/-/g, ' ')}</p>
+                    <p className="project-sector">{getSectorLabel(project)}</p>
 
-                    <motion.p
-                      className="project-description"
-                      initial={{ opacity: 0, height: 0 }}
-                      whileHover={{ opacity: 1, height: 'auto' }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      {project.description}
-                    </motion.p>
+                    <p className="project-hook">
+                      {project.hook || project.description}
+                    </p>
+
+                    <div className="project-tools" aria-label={`${project.title} tools`}>
+                      {(project.tools || []).map(tool => (
+                        <span className="tool-logo" key={tool}>
+                          <img src={asset(tool)} alt={tool.replace(/\.[^.]+$/, '').replace(/-/g, ' ')} />
+                        </span>
+                      ))}
+                    </div>
 
                     <p className="project-year">{project.year}</p>
                   </div>
@@ -178,7 +269,7 @@ export default function PortfolioEcosystem() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-              onClick={() => { setSelectedProject(null); setModalPlaying(false); }}
+                onClick={() => { setSelectedProject(null); setModalPlaying(false); }}
           >
             <motion.div
               className="project-modal"
@@ -192,7 +283,7 @@ export default function PortfolioEcosystem() {
 
               <div
                 className="modal-image"
-                style={{ backgroundColor: selectedProject.color }}
+                style={{ backgroundColor: '#000' }}
               >
                 {selectedProject.videoId ? (
                   <div className="modal-video-area">
@@ -210,7 +301,6 @@ export default function PortfolioEcosystem() {
                       <>
                         <iframe
                           className="modal-iframe"
-                          ref={iframeRef}
                           src={`https://www.youtube.com/embed/${selectedProject.videoId}?autoplay=1&mute=0&controls=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1`}
                           title={selectedProject.title}
                           allow="autoplay; encrypted-media; picture-in-picture"
@@ -218,25 +308,6 @@ export default function PortfolioEcosystem() {
                           loading="eager"
                           referrerPolicy="strict-origin-when-cross-origin"
                         />
-
-                        <button
-                          className={`modal-pause-toggle ${modalPaused ? 'paused' : 'playing'}`}
-                          aria-label={modalPaused ? 'Play video' : 'Pause video'}
-                          onClick={() => {
-                            if (!iframeRef.current) return;
-                            const win = iframeRef.current.contentWindow;
-                            if (!win) return;
-                            if (modalPaused) {
-                              win.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-                              setModalPaused(false);
-                            } else {
-                              win.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-                              setModalPaused(true);
-                            }
-                          }}
-                        >
-                          <span className="modal-pause-icon">{modalPaused ? '▶' : '⏸'}</span>
-                        </button>
                       </>
                     )}
                   </div>
@@ -252,15 +323,17 @@ export default function PortfolioEcosystem() {
                 <p className="modal-description">{selectedProject.description}</p>
 
                 <div className="modal-meta">
-                  <span className="meta-badge">{selectedProject.category}</span>
+                  <span className="meta-badge">
+                    {getSectorLabel(selectedProject)}
+                  </span>
                   <span className="meta-year">{selectedProject.year}</span>
                 </div>
 
                 <a
-  href="https://youtube.com/shorts/ACrOPLjY4xA?si=QifFTfh5iG_Vhslt"
-  target="_blank"
-  rel="noopener noreferrer"
->
+                  href={selectedProject.videoUrl ? selectedProject.videoUrl : (selectedProject.videoId ? `https://youtube.com/shorts/${selectedProject.videoId}` : '#')}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
   <button className="btn btn-primary">
     View Full Project
   </button>

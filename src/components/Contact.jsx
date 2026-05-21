@@ -6,15 +6,18 @@ export default function Contact() {
   const [formData, setFormData] = useState({
     name: '',
     user_email: '',
+    whatsapp: '',
     service: '',
     message: ''
   })
-  const [submitStatus, setSubmitStatus] = useState(null) // null | 'sending' | 'sent' | 'failed'
+
+  const [submitStatus, setSubmitStatus] = useState(null)
   const form = useRef(null)
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setFormData(prev => ({
+
+    setFormData((prev) => ({
       ...prev,
       [name]: value
     }))
@@ -22,49 +25,91 @@ export default function Contact() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+
     if (submitStatus === 'sending') return
 
     const { name, user_email, message } = formData
+
     const emailRegex = /\S+@\S+\.\S+/
 
-    if (!name.trim() || !user_email.trim() || !message.trim() || !emailRegex.test(user_email)) {
+    if (
+      !name.trim() ||
+      !user_email.trim() ||
+      !message.trim() ||
+      !emailRegex.test(user_email)
+    ) {
       setSubmitStatus('failed')
-      setTimeout(() => setSubmitStatus(null), 3000)
+
+      setTimeout(() => {
+        setSubmitStatus(null)
+      }, 3000)
+
       return
     }
 
     setSubmitStatus('sending')
 
-    emailjs.sendForm(
-      'service_7lnpz6s',
-      'template_s151ndh',
-      form.current,
-      'wCh7FXXSwtdAl1S_l'
-    ).then(() => {
-      setSubmitStatus('sent')
-      setFormData({ name: '', user_email: '', service: '', message: '' })
-      if (form.current) form.current.reset()
-      setTimeout(() => setSubmitStatus(null), 3000)
-    }).catch(() => {
-      setSubmitStatus('failed')
-      setTimeout(() => setSubmitStatus(null), 3000)
-    })
+    emailjs
+      .sendForm(
+        'service_7lnpz6s',
+        'template_s151ndh',
+        form.current,
+        'wCh7FXXSwtdAl1S_l'
+      )
+      .then(() => {
+        setSubmitStatus('sent')
+
+        setFormData({
+          name: '',
+          user_email: '',
+          whatsapp: '',
+          service: '',
+          message: ''
+        })
+
+        if (form.current) {
+          form.current.reset()
+        }
+
+        setTimeout(() => {
+          setSubmitStatus(null)
+        }, 3000)
+      })
+      .catch(() => {
+        setSubmitStatus('failed')
+
+        setTimeout(() => {
+          setSubmitStatus(null)
+        }, 3000)
+      })
   }
 
   return (
     <section className="contact" id="contact">
       <div className="contact-header">
         <h2 className="contact-title">
-          READY TO CREATE <span className="contact-highlight">SOMETHING UNFORGETTABLE </span>?
+          READY TO CREATE{' '}
+          <span className="contact-highlight">
+            SOMETHING UNFORGETTABLE
+          </span>{' '}
+          ?
         </h2>
-        <p className="contact-subtitle">Let's collaborate and turn your ideas into  cinematic content designed to capture attention, tell meaningful stories, and leave lasting impact.</p>
+
+        <p className="contact-subtitle">
+          Let's collaborate and turn your ideas into cinematic content
+          designed to capture attention, tell meaningful stories,
+          and leave lasting impact.
+        </p>
+
         <div className="contact-divider"></div>
       </div>
 
       <div className="contact-wrapper">
-      
-
-        <form ref={form} className="contact-form fade-up stagger-1" onSubmit={handleSubmit}>
+        <form
+          ref={form}
+          className="contact-form fade-up stagger-1"
+          onSubmit={handleSubmit}
+        >
           <div className="form-row">
             <div className="form-group">
               <input
@@ -77,6 +122,7 @@ export default function Contact() {
                 required
               />
             </div>
+
             <div className="form-group">
               <input
                 type="email"
@@ -84,18 +130,23 @@ export default function Contact() {
                 placeholder="Email"
                 name="user_email"
                 value={formData.user_email}
-                required
                 onChange={handleChange}
+                required
               />
             </div>
+
             <div className="form-group">
               <input
                 type="text"
                 className="form-input"
                 placeholder="WhatsApp"
+                name="whatsapp"
+                value={formData.whatsapp}
+                onChange={handleChange}
               />
             </div>
           </div>
+
           <div className="form-group">
             <input
               type="text"
@@ -106,18 +157,30 @@ export default function Contact() {
               onChange={handleChange}
             />
           </div>
+
           <div className="form-group">
             <textarea
               className="form-textarea"
               placeholder="Message"
               name="message"
               value={formData.message}
-              required
               onChange={handleChange}
+              required
             ></textarea>
           </div>
-          <button type="submit" className="contact-submit" disabled={submitStatus === 'sending'}>
-            {submitStatus === 'sending' ? 'SENDING…' : submitStatus === 'sent' ? 'SENT ✓' : submitStatus === 'failed' ? 'FAILED ✕' : 'SEND'}
+
+          <button
+            type="submit"
+            className="contact-submit"
+            disabled={submitStatus === 'sending'}
+          >
+            {submitStatus === 'sending'
+              ? 'SENDING…'
+              : submitStatus === 'sent'
+              ? 'SENT ✓'
+              : submitStatus === 'failed'
+              ? 'FAILED ✕'
+              : 'SEND'}
           </button>
         </form>
       </div>
@@ -125,35 +188,47 @@ export default function Contact() {
       <div className="contact-info-grid fade-up stagger-2">
         <div className="contact-item">
           <div className="contact-icon">✉</div>
+
           <div>
             <div className="contact-label">Email</div>
-            <div className="contact-value">jannatulmaowa.me@gmail.com</div>
+            <div className="contact-value">
+              jannatulmaowa.me@gmail.com
+            </div>
           </div>
-        </div>        <div className="contact-item">
+        </div>
+
+        <div className="contact-item">
           <div className="contact-icon">
             <img src={asset('instagram.png')} alt="Instagram" />
           </div>
+
           <div>
             <div className="contact-label">Instagram</div>
             <div className="contact-value">@meaw_maowa</div>
           </div>
         </div>
+
         <div className="contact-item">
           <div className="contact-icon">
             <img src={asset('response.png')} alt="Response Time" />
           </div>
+
           <div>
             <div className="contact-label">Response Time</div>
             <div className="contact-value">Within 24 Hours</div>
           </div>
         </div>
+
         <div className="contact-item">
           <div className="contact-icon">
             <img src={asset('location.png')} alt="Location" />
           </div>
+
           <div>
             <div className="contact-label">Location</div>
-            <div className="contact-value">Dhaka, Bangladesh · Remote Worldwide</div>
+            <div className="contact-value">
+              Dhaka, Bangladesh · Remote Worldwide
+            </div>
           </div>
         </div>
       </div>
