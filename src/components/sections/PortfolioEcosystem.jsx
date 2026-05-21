@@ -1,11 +1,11 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { asset } from '../../utils/asset';
 import { motion, AnimatePresence } from 'framer-motion';
+import { registerYouTubeIframeAPIReady } from '../../utils/youtubeApi';
 import '../../styles/sections/portfolio-ecosystem.css';
 
 const projects = [
- 
   {
     id: 1,
     title: "Typography in Motion",
@@ -55,8 +55,8 @@ AI Video Generation,
 Typography Animation,
 Sound Design,
 Creative Direction`,
-  hook: "An AI-assisted ad built around motion, sound, and story.",
-  tools: ['after-effects.png', 'chatgpt.png', 'illustrator.png', 'photoshop.png'],
+    hook: "An AI-assisted ad built around motion, sound, and story.",
+    tools: ['after-effects.png', 'chatgpt.png', 'illustrator.png', 'photoshop.png'],
     color: "#0f172a",
     videoId: 'ZfNsTScUwpU',
     poster: 'ai1.png',
@@ -76,8 +76,8 @@ Motion design,
 Visual storytelling,
 Dynamic transitions,
 Premium editing aesthetics`,
-  hook: "Cinematic typography with a polished motion-design finish.",
-  tools: ['after-effects.png', 'premiere-pro.png'],
+    hook: "Cinematic typography with a polished motion-design finish.",
+    tools: ['after-effects.png', 'premiere-pro.png'],
     color: "#6b21a8",
     videoId: 'cvcJGoWiTXs',
     videoUrl: 'https://youtube.com/shorts/cvcJGoWiTXs',
@@ -103,7 +103,6 @@ Premium editing aesthetics`,
     videoUrl: 'https://youtu.be/835u3xtpiyo',
     poster: 'money.png',
   },
-  
 ];
 
 const categories = ["all","Podcast","Practice", "Advertising", "Using AI"];
@@ -113,6 +112,67 @@ export default function PortfolioEcosystem() {
   const [selectedProject, setSelectedProject] = useState(null);
   const [modalPlaying, setModalPlaying] = useState(false);
   const containerRef = useRef(null);
+  const modalPlayerContainerRef = useRef(null);
+  const modalYTRef = useRef(null);
+  const modalPlayerReadyRef = useRef(false);
+  const modalApiLoadingRef = useRef(false);
+
+  useEffect(() => {
+    return () => {
+      try { if (modalYTRef.current && modalYTRef.current.destroy) modalYTRef.current.destroy(); } catch (err) {}
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!selectedProject || !modalPlaying || !selectedProject.videoId) return
+
+    const createModalPlayer = () => {
+      if (!modalPlayerContainerRef.current || !window.YT) return null;
+      if (modalYTRef.current) return modalYTRef.current;
+
+      try {
+        const isMobile = window.innerWidth <= 768;
+        modalYTRef.current = new window.YT.Player(modalPlayerContainerRef.current, {
+          width: '100%',
+          height: '100%',
+          videoId: selectedProject.videoId,
+          playerVars: {
+            autoplay: 1,
+            mute: 0,
+            controls: 1,
+            rel: 0,
+            modestbranding: 1,
+            playsinline: 1,
+            fs: isMobile ? 0 : 1,
+          },
+          events: {
+            onReady: (e) => {
+              modalPlayerReadyRef.current = true;
+              try { e.target.playVideo(); } catch (err) {}
+            },
+          }
+        });
+      } catch (err) {}
+
+      return modalYTRef.current;
+    }
+
+    if (window.YT && window.YT.Player) {
+      createModalPlayer();
+      return
+    }
+
+    if (!modalApiLoadingRef.current) {
+      modalApiLoadingRef.current = true;
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      document.body.appendChild(tag);
+      registerYouTubeIframeAPIReady(() => {
+        modalApiLoadingRef.current = false;
+        createModalPlayer();
+      });
+    }
+  }, [modalPlaying, selectedProject])
 
   const filteredProjects =
     activeCategory === "all"
@@ -210,7 +270,13 @@ export default function PortfolioEcosystem() {
                   className="project-card"
                   whileHover={{ y: -8, scale: 1.02 }}
                   transition={{ duration: 0.3, ease: "easeOut" }}
-                  onClick={() => { setSelectedProject(project); setModalPlaying(false); }}
+                  onClick={() => {
+                    try { if (modalYTRef.current && modalYTRef.current.destroy) modalYTRef.current.destroy(); } catch (err) {}
+                    modalYTRef.current = null;
+                    modalPlayerReadyRef.current = false;
+                    setSelectedProject(project);
+                    setModalPlaying(false);
+                  }}
                 >
                   <div className="project-image" style={{ backgroundColor: '#000' }}>
                     {project.poster ? (
@@ -291,24 +357,16 @@ export default function PortfolioEcosystem() {
                       <button
                         type="button"
                         className="modal-video-poster"
-                        onClick={() => setModalPlaying(true)}
+                        onClick={() => {
+                          setModalPlaying(true);
+                        }}
                         aria-label="Play project video"
                       >
                         <img src={asset(selectedProject.poster || 'client.png')} alt={selectedProject.title} />
                         <span className="play-icon">▶</span>
                       </button>
                     ) : (
-                      <>
-                        <iframe
-                          className="modal-iframe"
-                          src={`https://www.youtube.com/embed/${selectedProject.videoId}?autoplay=1&mute=0&controls=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1`}
-                          title={selectedProject.title}
-                          allow="autoplay; encrypted-media; picture-in-picture"
-                          allowFullScreen
-                          loading="eager"
-                          referrerPolicy="strict-origin-when-cross-origin"
-                        />
-                      </>
+                      <div ref={modalPlayerContainerRef} style={{ width: '100%', height: '100%' }} />
                     )}
                   </div>
                 ) : (

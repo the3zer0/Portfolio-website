@@ -1,5 +1,6 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { asset } from '../utils/asset'
+import { registerYouTubeIframeAPIReady } from '../utils/youtubeApi'
 
 const tools = [
   { name: 'After Effects', logo: 'after-effects.png', className: 'logo--ae' },
@@ -9,85 +10,178 @@ const tools = [
 ]
 
 const stats = [
-  { value: '10M+', label: 'Content Views' },
+  { value: '1000+', label: 'Content Views' },
   { value: '1.5+', label: 'Years Experience' },
   { value: '10+', label: 'Happy Clients' },
   { value: '3K+', label: 'Hours in Premiere' },
 ]
 
 const YOUTUBE_VIDEO_ID = 'HnvYalV-BOU'
-const YOUTUBE_EMBED_URL = `https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1&mute=1&controls=1&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3`
-
 export default function Hero() {
+  const featuredSectionRef = useRef(null)
   const playerContainerRef = useRef(null)
   const ytPlayerRef = useRef(null)
   const savedTimeRef = useRef(0)
   const playerReadyRef = useRef(false)
+  const observerRef = useRef(null)
+  const apiLoadingRef = useRef(false)
+
+  const [playerCreated, setPlayerCreated] = useState(false)
+  const [isPlayerVisible, setIsPlayerVisible] = useState(false)
 
   useEffect(() => {
     let mounted = true
 
-    function createPlayer() {
-      if (!mounted || !playerContainerRef.current || !window.YT) return
-      ytPlayerRef.current = new window.YT.Player(playerContainerRef.current, {
-        width: '100%',
-        height: '100%',
-        videoId: YOUTUBE_VIDEO_ID,
-        playerVars: {
-          autoplay: 1,
-          mute: 1,
-          controls: 1,
-          rel: 0,
-          modestbranding: 1,
-          playsinline: 1,
-        },
-        events: {
-          onReady: (e) => {
-            playerReadyRef.current = true
-            try { e.target.mute(); e.target.playVideo(); } catch (err) {}
-          },
-        },
-      })
-    }
+    const ensurePlayer = () => {
+      if (ytPlayerRef.current || !playerContainerRef.current || !window.YT || !window.YT.Player) return
 
-    if (window.YT && window.YT.Player) {
-      createPlayer()
-    } else {
-      const tag = document.createElement('script')
-      tag.src = 'https://www.youtube.com/iframe_api'
-      document.body.appendChild(tag)
-      window.onYouTubeIframeAPIReady = () => {
-        if (mounted) createPlayer()
+      try {
+        ytPlayerRef.current = new window.YT.Player(playerContainerRef.current, {
+          width: '100%',
+          height: '100%',
+          videoId: YOUTUBE_VIDEO_ID,
+          playerVars: {
+            autoplay: 1,
+            mute: 1,
+            controls: 1,
+            rel: 0,
+            modestbranding: 1,
+            playsinline: 1,
+            iv_load_policy: 3,
+          },
+          events: {
+            onReady: (e) => {
+              if (!mounted) return
+              playerReadyRef.current = true
+              setPlayerCreated(true)
+              try { e.target.mute() } catch (err) {}
+              try {
+                e.target.seekTo(savedTimeRef.current || 0, true)
+                e.target.playVideo()
+              } catch (err) {}
+            },
+            onError: () => {
+              // Keep poster visible if the player fails to initialize.
+              ytPlayerRef.current = null
+            },
+          },
+        })
+      } catch (err) {
+        ytPlayerRef.current = null
       }
     }
 
-    const node = playerContainerRef.current?.closest('.featured-video-art') || playerContainerRef.current
-    let observer = null
-    if (node) {
-      observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (!ytPlayerRef.current || !playerReadyRef.current) return
-          try {
-            if (entry.intersectionRatio < 0.5) {
-              savedTimeRef.current = ytPlayerRef.current.getCurrentTime() || 0
-              ytPlayerRef.current.pauseVideo()
-            } else {
-              ytPlayerRef.current.seekTo(savedTimeRef.current || 0, true)
-              ytPlayerRef.current.playVideo()
+    const playFromSavedTime = () => {
+      if (!ytPlayerRef.current || !playerReadyRef.current) return
+      try {
+        ytPlayerRef.current.seekTo(savedTimeRef.current || 0, true)
+        ytPlayerRef.current.playVideo()
+      } catch (err) {}
+    }
+
+    const pauseAndStoreTime = () => {
+      if (!ytPlayerRef.current || !playerReadyRef.current) return
+      try {
+        savedTimeRef.current = ytPlayerRef.current.getCurrentTime() || 0
+        ytPlayerRef.current.pauseVideo()
+      } catch (err) {}
+    }
+
+    const handleVisibility = (entries) => {
+      entries.forEach((entry) => {
+        if (!mounted) return
+
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.55) {
+          setIsPlayerVisible(true)
+          if (!ytPlayerRef.current) {
+            if (!apiLoadingRef.current) {
+              apiLoadingRef.current = true
+              const tag = document.createElement('script')
+              tag.src = 'https://www.youtube.com/iframe_api'
+              document.body.appendChild(tag)
+              registerYouTubeIframeAPIReady(() => {
+                apiLoadingRef.current = false
+                ensurePlayer()
+              })
             }
-          } catch (err) {}
-        })
-      }, { threshold: [0.5] })
-      observer.observe(node)
+          } else {
+            playFromSavedTime()
+          }
+        } else {
+          setIsPlayerVisible(false)
+          pauseAndStoreTime()
+        }
+      })
+    }
+
+    observerRef.current = new IntersectionObserver(handleVisibility, {
+      threshold: [0, 0.55, 1],
+      rootMargin: '0px 0px -10% 0px',
+    })
+
+    if (featuredSectionRef.current) {
+      observerRef.current.observe(featuredSectionRef.current)
     }
 
     return () => {
       mounted = false
-      if (observer) observer.disconnect()
-      if (window.onYouTubeIframeAPIReady) window.onYouTubeIframeAPIReady = null
+      try { observerRef.current?.disconnect() } catch (err) {}
       try { if (ytPlayerRef.current && ytPlayerRef.current.destroy) ytPlayerRef.current.destroy() } catch (err) {}
     }
   }, [])
+
+  const handlePlayClick = () => {
+    if (ytPlayerRef.current && playerReadyRef.current) {
+      try {
+        ytPlayerRef.current.seekTo(savedTimeRef.current || 0, true)
+        ytPlayerRef.current.playVideo()
+      } catch (err) {}
+      return
+    }
+
+    if (!apiLoadingRef.current) {
+      apiLoadingRef.current = true
+      const tag = document.createElement('script')
+      tag.src = 'https://www.youtube.com/iframe_api'
+      document.body.appendChild(tag)
+      registerYouTubeIframeAPIReady(() => {
+        apiLoadingRef.current = false
+        if (!ytPlayerRef.current) {
+          const node = playerContainerRef.current
+          if (!node || !window.YT || !window.YT.Player) return
+          try {
+            ytPlayerRef.current = new window.YT.Player(node, {
+              width: '100%',
+              height: '100%',
+              videoId: YOUTUBE_VIDEO_ID,
+              playerVars: {
+                autoplay: 1,
+                mute: 1,
+                controls: 1,
+                rel: 0,
+                modestbranding: 1,
+                playsinline: 1,
+                iv_load_policy: 3,
+              },
+              events: {
+                onReady: (e) => {
+                  playerReadyRef.current = true
+                  setPlayerCreated(true)
+                  try { e.target.mute() } catch (err) {}
+                  try {
+                    e.target.seekTo(savedTimeRef.current || 0, true)
+                    e.target.playVideo()
+                  } catch (err) {}
+                },
+              },
+            })
+          } catch (err) {}
+        }
+      })
+    }
+  }
+
+
 
   return (
     <>
@@ -133,7 +227,7 @@ export default function Hero() {
         </div>
       </section>
 
-      <section className="featured-video" id="featured-work">
+      <section className="featured-video" id="featured-work" ref={featuredSectionRef}>
         <div className="featured-video-bg"></div>
         <div className="featured-container">
           <div className="featured-header fade-up">
@@ -145,10 +239,37 @@ export default function Hero() {
           <div className="featured-card fade-up">
             <div className="featured-video-wrapper">
               <div className="featured-video-art">
+                {/* Poster + play overlay as a fallback until the player is ready */}
+                {!playerCreated && (
+                  <>
+                    <button
+                      type="button"
+                      className="featured-play-btn"
+                      onClick={handlePlayClick}
+                      aria-label="Play featured video"
+                    >
+                      <span />
+                    </button>
+
+                    <button
+                      type="button"
+                      className="featured-video-poster"
+                      onClick={handlePlayClick}
+                      aria-label="Play featured video"
+                    >
+                      <img
+                        className="featured-thumb"
+                        src={`https://i.ytimg.com/vi/${YOUTUBE_VIDEO_ID}/hqdefault.jpg`}
+                        alt="Featured video thumbnail"
+                      />
+                    </button>
+                  </>
+                )}
+
                 <div
                   ref={playerContainerRef}
-                  className="featured-video-iframe is-ready"
-                  style={{ width: '100%', height: '100%' }}
+                  className={`featured-video-iframe ${playerCreated ? 'is-ready' : ''}`}
+                  style={{ width: '100%', height: '100%', opacity: isPlayerVisible || playerCreated ? 1 : 0 }}
                 />
               </div>
             </div>
