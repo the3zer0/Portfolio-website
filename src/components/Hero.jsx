@@ -10,7 +10,7 @@ const tools = [
 ]
 
 const stats = [
-  { value: '1000+', label: 'Content Views' },
+  { value: '22k+', label: 'Content Views' },
   { value: '1.5+', label: 'Years Experience' },
   { value: '10+', label: 'Happy Clients' },
   { value: '3K+', label: 'Hours in Premiere' },
