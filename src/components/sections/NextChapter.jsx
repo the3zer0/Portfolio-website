@@ -124,8 +124,8 @@ From strategy to final delivery, every project is crafted to capture attention, 
             variants={itemVariants}
           >
             <div className="trust-item">
-              <span className="trust-number">50+</span>
-              <span className="trust-label">Projects Delivered</span>
+              <span className="trust-number">55+</span>
+              <span className="trust-label">Creative Projects</span>
             </div>
             <div className="trust-item">
               <span className="trust-number">100%</span>

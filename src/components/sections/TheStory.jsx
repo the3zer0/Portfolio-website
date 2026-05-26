@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { motion } from 'framer-motion';
-import { useParallax, useStaggerReveal } from '../../hooks/useAnimations';
+import { useStaggerReveal } from '../../hooks/useAnimations';
 import ProcessCards from '../ProcessCards';
 import '../../styles/sections/the-story.css';
 
@@ -10,7 +10,6 @@ export default function TheStory() {
   const rightRef = useRef(null);
 
   useStaggerReveal(containerRef);
-  useParallax(0.5, rightRef);
 
   const storyParagraphs = [
     {

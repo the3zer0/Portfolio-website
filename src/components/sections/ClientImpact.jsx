@@ -19,26 +19,12 @@ const testimonials = [
   },
   {
     id: 3,
-    quote: "Maowa created a promotional video for Tuition Hub Mymensingh with clean editing, engaging pacing, and professional visuals that made our content more impactful and student-friendly.",
+    quote: "Maowa created a fully AI-generated promotional ad video for Tuition Hub Mymensingh with clean editing, engaging pacing, and professional visuals that effectively showcased the platform’s tutoring services and made the content more impactful and trustworthy for guardians.",
     author: "MD. Tanbir Ahmmed",
     role: "CEO, Tuition Hub Mymensingh",
     rating: 5,
   },
-  {
-    id: 4,
-    quote: "JMR transformed our vision into reality. The cinematic quality and attention to detail elevated our brand beyond expectations.",
-    author: "Sarah Ali",
-    role: "Creative Director, TechFlow",
-    rating: 5,
-  },
-  
-  {
-    id: 5,
-    quote: "Professionalism meets creativity. JMR delivered a final product that exceeded our expectations and resonated with our audience.",
-    author: "David Kim",
-    role: "Founder, Dream Digital",
-    rating: 5,
-  },
+
 ];
 
 export default function ClientImpact() {
@@ -60,9 +46,19 @@ export default function ClientImpact() {
   const scrollCarousel = (direction) => {
     if (scrollContainerRef.current) {
       const viewportWidth = scrollContainerRef.current.getBoundingClientRect().width || 300;
+      
+      // Calculate next index with wrapping
+      let targetIndex = current;
+      if (direction > 0) {
+        // Right button clicked
+        targetIndex = (current + 1) % testimonials.length;
+      } else {
+        // Left button clicked
+        targetIndex = (current - 1 + testimonials.length) % testimonials.length;
+      }
 
-      scrollContainerRef.current.scrollBy({
-        left: direction * viewportWidth,
+      scrollContainerRef.current.scrollTo({
+        left: targetIndex * viewportWidth,
         behavior: 'smooth',
       });
     }
